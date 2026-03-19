@@ -19,12 +19,8 @@ export function loadNotes(): Note[] {
   }
 }
 
-export function saveNotes(notes: Note[]): void {
-  try {
-    localStorage.setItem(NOTES_KEY, JSON.stringify(notes));
-  } catch {
-    // storage unavailable
-  }
+export function saveNotes(_: Note[]): void {
+  // Silently skip localStorage write for note/folder data in Supabase mode.
 }
 
 export function loadFolders(): Folder[] {
@@ -37,12 +33,8 @@ export function loadFolders(): Folder[] {
   }
 }
 
-export function saveFolders(folders: Folder[]): void {
-  try {
-    localStorage.setItem(FOLDERS_KEY, JSON.stringify(folders));
-  } catch {
-    // storage unavailable
-  }
+export function saveFolders(_: Folder[]): void {
+  // Silently skip localStorage write for note/folder data in Supabase mode.
 }
 
 const FOLDER_COLORS = [

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Note } from '../../types/note';
 import { useNotes } from '../../hooks/useNotes';
@@ -74,22 +74,22 @@ export function NoteItem({ note }: NoteItemProps) {
                 className="w-1.5 h-1.5 rounded-sm"
                 style={{ backgroundColor: folder.color }}
               />
-              <span className="text-[9px] font-mono text-shadow/70 truncate dark:text-smoke/70">
+              <span className="text-[10px] font-mono text-shadow/70 truncate dark:text-smoke/70">
                 {folder.name}
               </span>
             </div>
           )}
           {preview && !folder && (
-            <p className="text-[10px] font-mono text-shadow truncate mt-0.5 leading-snug dark:text-smoke">
+            <p className="text-[11px] font-mono text-shadow truncate mt-0.5 leading-snug dark:text-smoke">
               {preview}
             </p>
           )}
           <div className="flex items-center justify-between mt-1">
-            <p className="text-[9px] font-mono text-shadow/70 dark:text-smoke/70">
+            <p className="text-[10px] font-mono text-shadow/70 dark:text-smoke/70">
               {formatRelativeTime(note.updatedAt)}
             </p>
             {note.pinned && (
-              <span className="text-[9px] font-mono text-shadow/80 dark:text-smoke/80">
+              <span className="text-[10px] font-mono text-shadow/80 dark:text-smoke/80">
                 ★
               </span>
             )}
@@ -109,7 +109,7 @@ export function NoteItem({ note }: NoteItemProps) {
             }}
             className="opacity-0 group-hover:opacity-100 w-6 h-6 flex items-center justify-center rounded
                        text-shadow/60 hover:text-ink hover:bg-white/60 dark:hover:bg-stone/40
-                       transition-all duration-150 dark:text-smoke text-[10px]"
+                       transition-all duration-150 dark:text-smoke text-[11px]"
             title={note.pinned ? 'Unpin note' : 'Pin note'}
           >
             {note.pinned ? '★' : '☆'}
@@ -124,7 +124,7 @@ export function NoteItem({ note }: NoteItemProps) {
                        transition-all duration-150 dark:text-smoke"
             title="Delete note"
           >
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+            <svg width="11" height="11" viewBox="0 0 10 10" fill="none">
               <path d="M1 1L9 9M9 1L1 9" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
             </svg>
           </button>
@@ -142,7 +142,7 @@ export function NoteItem({ note }: NoteItemProps) {
             className="absolute left-full top-0 ml-2 z-50"
           >
             <div className="bg-sand dark:bg-charcoal border border-mist dark:border-stone rounded-md p-3 shadow-lg">
-              <p className="text-[10px] font-mono text-ink/90 dark:text-fog/90 leading-relaxed whitespace-pre-wrap break-words max-h-40 overflow-y-auto scrollbar-none">
+              <p className="text-[11px] font-mono text-ink/90 dark:text-fog/90 leading-relaxed whitespace-pre-wrap break-words max-h-40 overflow-y-auto scrollbar-none">
                 {fullContent}
               </p>
             </div>

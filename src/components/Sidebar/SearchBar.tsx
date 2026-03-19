@@ -1,4 +1,3 @@
-import React from 'react';
 import { useNotes } from '../../hooks/useNotes';
 
 export function SearchBar() {

@@ -1,4 +1,3 @@
-import React from 'react';
 import { useNotes } from '../../hooks/useNotes';
 
 export function Settings() {
@@ -7,7 +6,7 @@ export function Settings() {
   return (
     <div className="px-5 pb-3">
       <div className="mb-4">
-        <span className="text-[10px] font-mono font-semibold tracking-widest uppercase text-shadow dark:text-smoke">
+        <span className="text-[11px] font-mono font-semibold tracking-widest uppercase text-shadow dark:text-smoke">
           Settings
         </span>
       </div>
@@ -26,10 +25,10 @@ export function Settings() {
             <div className="absolute left-0.5 top-0.5 w-4 h-4 bg-white dark:bg-charcoal rounded-full transition-transform peer-checked:translate-x-4 shadow"></div>
           </div>
           <div className="flex-1">
-            <p className="text-[10px] font-mono text-ink dark:text-fog leading-relaxed">
+            <p className="text-[11px] font-mono text-ink dark:text-fog leading-relaxed">
               Auto-delete empty notes
             </p>
-            <p className="text-[9px] font-mono text-shadow/80 dark:text-smoke/80 mt-0.5">
+            <p className="text-[10px] font-mono text-shadow/80 dark:text-smoke/80 mt-0.5">
               Remove notes with empty title and content after 5 seconds
             </p>
           </div>

@@ -1,4 +1,3 @@
-import React from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { NoteItem } from './NoteItem';
 import { useNotes } from '../../hooks/useNotes';
@@ -11,7 +10,7 @@ export function NoteList() {
     <div className="flex-1 flex flex-col overflow-y-auto py-1 scrollbar-none">
       <div className="px-5 pb-1 flex items-center justify-end">
         <label className="flex items-center gap-2">
-          <span className="text-[9px] font-mono text-shadow/80 dark:text-smoke/80 uppercase tracking-wide">
+          <span className="text-[10px] font-mono text-shadow/80 dark:text-smoke/80 uppercase tracking-wide">
             Sort
           </span>
           <select
@@ -19,7 +18,7 @@ export function NoteList() {
             onChange={(e) =>
               setSortBy(e.target.value as 'updated' | 'created' | 'title')
             }
-            className="text-[9px] font-mono text-shadow/80 bg-transparent border border-mist rounded px-2 py-0.5 cursor-pointer outline-none hover:border-fog transition-colors dark:text-smoke dark:border-stone dark:hover:border-ash"
+            className="text-[10px] font-mono text-shadow/80 bg-transparent border border-mist rounded px-2 py-0.5 cursor-pointer outline-none hover:border-fog transition-colors dark:text-smoke dark:border-stone dark:hover:border-ash"
           >
             <option value="updated">Last edited</option>
             <option value="created">Created</option>
@@ -37,7 +36,7 @@ export function NoteList() {
               transition={{ duration: 0.15 }}
               className="px-5 py-3"
             >
-              <p className="text-[10px] font-mono text-shadow tracking-wide dark:text-smoke">
+              <p className="text-[11px] font-mono text-shadow tracking-wide dark:text-smoke">
                 No notes found
               </p>
             </motion.div>

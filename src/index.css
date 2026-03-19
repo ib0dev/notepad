@@ -13,6 +13,11 @@
     padding: 0;
   }
 
+  html {
+    /* Scales Tailwind rem-based sizing (spacing, icon button sizes, etc.) */
+    font-size: 17px;
+  }
+
   body {
     background-color: #F6F3ED;
     color: #111111;

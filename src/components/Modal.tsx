@@ -23,7 +23,7 @@ export function Modal({ isOpen, onClose, onConfirm, title, message }: ModalProps
             initial={{ scale: 0.9, y: 20 }}
             animate={{ scale: 1, y: 0 }}
             exit={{ scale: 0.9, y: 20 }}
-            className="bg-white dark:bg-charcoal rounded-lg overflow-hidden shadow-lg w-[300px]"
+            className="bg-white dark:bg-charcoal rounded-lg overflow-hidden shadow-lg w-[320px]"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-5 border-b border-mist dark:border-stone">

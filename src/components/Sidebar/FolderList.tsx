@@ -45,16 +45,16 @@ export function FolderList() {
   return (
     <div className="px-5 pb-3">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-[10px] font-mono font-semibold tracking-widest uppercase text-shadow dark:text-smoke">
+        <span className="text-[11px] font-mono font-semibold tracking-widest uppercase text-shadow dark:text-smoke">
           Folders
         </span>
         <button
           onClick={() => setIsCreating(true)}
           title="New folder"
-          className="w-5 h-5 flex items-center justify-center rounded text-[10px]
+          className="w-5 h-5 flex items-center justify-center rounded text-[11px]
                      text-shadow hover:text-ink transition-colors duration-150 dark:text-smoke dark:hover:text-fog"
         >
-          <svg width="10" height="10" viewBox="0 0 8 8" fill="none">
+          <svg width="11" height="11" viewBox="0 0 8 8" fill="none">
             <line x1="4" y1="1" x2="4" y2="7" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
             <line x1="1" y1="4" x2="7" y2="4" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
           </svg>
@@ -74,7 +74,7 @@ export function FolderList() {
             onBlur={() => !newFolderName.trim() && setIsCreating(false)}
             onKeyDown={handleKeyDown}
             placeholder="Folder name..."
-            className="w-full bg-transparent text-[10px] font-mono text-ink placeholder-shadow
+            className="w-full bg-transparent text-[11px] font-mono text-ink placeholder-shadow
                        border-b border-mist focus:border-fog outline-none py-1
                        transition-colors duration-200 tracking-wide dark:text-fog dark:border-stone dark:focus:border-ash"
           />
@@ -88,7 +88,7 @@ export function FolderList() {
         onDrop={(e) => handleDrop(e, null)}
         className={`
           mb-0.5 px-3 py-1.5 rounded-md cursor-pointer
-          transition-colors duration-150 text-[10px] font-mono tracking-wide
+          transition-colors duration-150 text-[11px] font-mono tracking-wide
           ${selectedFolderId === null ? 'bg-white dark:bg-stone' : 'hover:bg-white/50 dark:hover:bg-stone/30'}
           ${dragOverFolder === null ? 'bg-fog/30 dark:bg-ash/30 border-2 border-dashed border-shadow' : ''}
         `}
@@ -109,7 +109,7 @@ export function FolderList() {
           onDrop={(e) => handleDrop(e, folder.id)}
           className={`
             group flex items-center justify-between mb-0.5 px-3 py-1.5 rounded-md cursor-pointer
-            transition-colors duration-150 text-[10px] font-mono tracking-wide
+            transition-colors duration-150 text-[11px] font-mono tracking-wide
             ${selectedFolderId === folder.id ? 'bg-white dark:bg-stone' : 'hover:bg-white/50 dark:hover:bg-stone/30'}
             ${dragOverFolder === folder.id ? 'bg-fog/30 dark:bg-ash/30 border-2 border-dashed border-shadow' : ''}
           `}
@@ -132,7 +132,7 @@ export function FolderList() {
                        text-shadow/60 hover:text-red-400 transition-opacity duration-150 dark:text-smoke"
             title="Delete folder"
           >
-            <svg width="8" height="8" viewBox="0 0 6 6" fill="none">
+            <svg width="9" height="9" viewBox="0 0 6 6" fill="none">
               <path d="M1 1L5 5M5 1L1 5" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
             </svg>
           </button>

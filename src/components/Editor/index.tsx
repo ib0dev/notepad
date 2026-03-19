@@ -85,7 +85,7 @@ export function Editor() {
   if (!note) {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <p className="text-[11px] font-mono text-shadow tracking-widest uppercase dark:text-smoke">
+        <p className="text-[12px] font-mono text-shadow tracking-widest uppercase dark:text-smoke">
           No note selected
         </p>
       </div>
@@ -105,14 +105,14 @@ export function Editor() {
         {/* Toolbar */}
         <div className="flex items-center justify-between px-10 pt-7 pb-3">
           <div className="flex items-center gap-4">
-            <span className="text-[9px] font-mono text-shadow tracking-widest uppercase dark:text-smoke">
+            <span className="text-[10px] font-mono text-shadow tracking-widest uppercase dark:text-smoke">
               Last edited {formatRelativeTime(note.updatedAt)}
             </span>
             <div className="relative group">
               <select
                 value={note.folderId || ''}
                 onChange={(e) => moveNoteToFolder(note.id, e.target.value || null)}
-                className="text-[9px] font-mono text-shadow/80 bg-transparent border border-mist rounded
+                className="text-[10px] font-mono text-shadow/80 bg-transparent border border-mist rounded
                            px-2 py-0.5 cursor-pointer outline-none hover:border-fog transition-colors
                            dark:text-smoke dark:border-stone dark:hover:border-ash"
               >
@@ -128,7 +128,7 @@ export function Editor() {
           <button
             onClick={handleDelete}
             title="Delete note"
-            className="text-[11px] font-mono text-shadow/60 hover:text-red-400
+            className="text-[12px] font-mono text-shadow/60 hover:text-red-400
                        px-4 py-2 rounded transition-colors duration-150 dark:text-smoke dark:hover:text-red-400"
           >
             Delete
@@ -165,7 +165,7 @@ export function Editor() {
               setIsBold((prev) => !prev);
               applyFormat('bold');
             }}
-            className={`px-2 py-1 rounded border text-[10px] font-mono tracking-wide transition-colors
+            className={`px-2 py-1 rounded border text-[11px] font-mono tracking-wide transition-colors
               ${
                 isBold
                   ? 'border-ink bg-ink text-sand dark:border-fog dark:bg-fog dark:text-charcoal'
@@ -181,7 +181,7 @@ export function Editor() {
               setIsItalic((prev) => !prev);
               applyFormat('italic');
             }}
-            className={`px-2 py-1 rounded border text-[10px] font-mono tracking-wide transition-colors
+            className={`px-2 py-1 rounded border text-[11px] font-mono tracking-wide transition-colors
               ${
                 isItalic
                   ? 'border-ink bg-ink text-sand dark:border-fog dark:bg-fog dark:text-charcoal'
@@ -197,7 +197,7 @@ export function Editor() {
               setIsUnderline((prev) => !prev);
               applyFormat('underline');
             }}
-            className={`px-2 py-1 rounded border text-[10px] font-mono tracking-wide transition-colors
+            className={`px-2 py-1 rounded border text-[11px] font-mono tracking-wide transition-colors
               ${
                 isUnderline
                   ? 'border-ink bg-ink text-sand dark:border-fog dark:bg-fog dark:text-charcoal'
@@ -207,7 +207,7 @@ export function Editor() {
             U
           </button>
           <div className="ml-3 flex items-center gap-1">
-            <span className="text-[9px] font-mono text-shadow dark:text-smoke mr-1">
+            <span className="text-[10px] font-mono text-shadow dark:text-smoke mr-1">
               Color
             </span>
             <button

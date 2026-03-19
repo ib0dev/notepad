@@ -1,4 +1,3 @@
-import React from 'react';
 import { useNotes } from '../../hooks/useNotes';
 import { useTheme } from '../../hooks/useTheme';
 import type { EditorFontSize } from '../../utils/storage';
@@ -26,16 +25,16 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
       onClick={onClose}
     >
       <div
-        className="w-[320px] max-w-[90vw] rounded-lg border border-mist bg-sand shadow-lg dark:bg-charcoal dark:border-stone"
+        className="w-[340px] max-w-[90vw] rounded-lg border border-mist bg-sand shadow-lg dark:bg-charcoal dark:border-stone"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between px-5 py-3 border-b border-mist/60 dark:border-stone/60">
-          <span className="text-[10px] font-mono font-semibold tracking-widest uppercase text-shadow dark:text-smoke">
+          <span className="text-[11px] font-mono font-semibold tracking-widest uppercase text-shadow dark:text-smoke">
             Settings
           </span>
           <button
             onClick={onClose}
-            className="text-[11px] font-mono text-shadow/80 hover:text-ink dark:text-smoke dark:hover:text-fog"
+            className="text-[12px] font-mono text-shadow/80 hover:text-ink dark:text-smoke dark:hover:text-fog"
           >
             Close
           </button>
@@ -55,10 +54,10 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
               <div className="absolute left-0.5 top-0.5 w-4 h-4 bg-white dark:bg-charcoal rounded-full transition-transform peer-checked:translate-x-4 shadow" />
             </div>
             <div className="flex-1">
-              <p className="text-[10px] font-mono text-ink dark:text-fog leading-relaxed">
+              <p className="text-[11px] font-mono text-ink dark:text-fog leading-relaxed">
                 Auto-delete empty notes
               </p>
-              <p className="text-[9px] font-mono text-shadow/80 dark:text-smoke/80 mt-0.5">
+              <p className="text-[10px] font-mono text-shadow/80 dark:text-smoke/80 mt-0.5">
                 Remove notes with empty title and content after 5 seconds
               </p>
             </div>
@@ -66,7 +65,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
           {/* Theme selector */}
           <div>
-            <p className="text-[10px] font-mono text-ink dark:text-fog mb-1">
+            <p className="text-[11px] font-mono text-ink dark:text-fog mb-1">
               Theme
             </p>
             <div className="flex gap-2">
@@ -74,7 +73,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                 <button
                   key={value}
                   onClick={() => setTheme(value)}
-                  className={`flex-1 px-2 py-1 rounded border text-[10px] font-mono tracking-wide transition-colors
+                  className={`flex-1 px-2 py-1 rounded border text-[11px] font-mono tracking-wide transition-colors
                     ${
                       theme === value
                         ? 'border-ink bg-ink text-sand dark:border-fog dark:bg-fog dark:text-charcoal'
@@ -89,7 +88,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
           {/* Editor font size */}
           <div>
-            <p className="text-[10px] font-mono text-ink dark:text-fog mb-1">
+            <p className="text-[11px] font-mono text-ink dark:text-fog mb-1">
               Editor font size
             </p>
             <div className="flex gap-2">
@@ -97,7 +96,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                 <button
                   key={option.value}
                   onClick={() => updateSetting({ editorFontSize: option.value })}
-                  className={`flex-1 px-2 py-1 rounded border text-[10px] font-mono tracking-wide transition-colors
+                  className={`flex-1 px-2 py-1 rounded border text-[11px] font-mono tracking-wide transition-colors
                     ${
                       settings.editorFontSize === option.value
                         ? 'border-ink bg-ink text-sand dark:border-fog dark:bg-fog dark:text-charcoal'

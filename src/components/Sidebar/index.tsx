@@ -38,17 +38,18 @@ export function Sidebar() {
               </button>
               <button
                 onClick={() => setShowTemplateModal(true)}
-                title="New note from template"
+                title="New note"
+                aria-label="New note"
                 className="w-7 h-7 flex items-center justify-center rounded
-                           text-shadow hover:text-ink transition-colors duration-150 dark:text-fog dark:hover:text-smoke"
+             text-shadow hover:text-ink transition-colors duration-150 dark:text-fog dark:hover:text-smoke"
               >
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
-                  <path d="M21 10H7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                  <path d="M21 18H7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                  <path d="M17 14H7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                  <path d="M7 2H3M21 2H17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                  <path d="M17 4V8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                  <path d="M7 4V8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                  <path
+                    d="M12 5V19M5 12H19"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                  />
                 </svg>
               </button>
             </>

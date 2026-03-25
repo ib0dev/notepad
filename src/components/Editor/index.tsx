@@ -20,20 +20,17 @@ export function Editor() {
     | null
   >(null);
 
-  // Re-render every 30s to keep relative time fresh
   useEffect(() => {
     const id = setInterval(() => forceUpdate((n) => n + 1), 30_000);
     return () => clearInterval(id);
   }, []);
 
-  // Focus title on new note (empty title)
   useEffect(() => {
     if (note && !note.title && titleRef.current) {
       titleRef.current.focus();
     }
-  }, [activeId]);
+  }, [activeId, note]);
 
-  // Sync editor content only when switching notes
   useEffect(() => {
     if (!contentRef.current) return;
 
@@ -43,16 +40,50 @@ export function Editor() {
     if (currentHtml !== newHtml) {
       contentRef.current.innerHTML = newHtml;
     }
-  }, [note?.id]);
+  }, [note?.id, note?.content]);
 
-  // Ensure formatting uses CSS spans (more consistent)
   useEffect(() => {
     try {
       document.execCommand('styleWithCSS', false, 'true');
     } catch {
-      // ignore if not supported
+      // ignore
     }
   }, []);
+
+  const updateToolbarState = useCallback(() => {
+    const editor = contentRef.current;
+    if (!editor) return;
+
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return;
+
+    const range = selection.getRangeAt(0);
+    const commonNode = range.commonAncestorContainer;
+    const isInsideEditor = editor.contains(
+      commonNode.nodeType === Node.TEXT_NODE ? commonNode.parentNode : commonNode
+    );
+
+    if (!isInsideEditor) return;
+
+    try {
+      setIsBold(document.queryCommandState('bold'));
+      setIsItalic(document.queryCommandState('italic'));
+      setIsUnderline(document.queryCommandState('underline'));
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  useEffect(() => {
+    const handleSelectionChange = () => {
+      updateToolbarState();
+    };
+
+    document.addEventListener('selectionchange', handleSelectionChange);
+    return () => {
+      document.removeEventListener('selectionchange', handleSelectionChange);
+    };
+  }, [updateToolbarState]);
 
   const handleTitle = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,29 +93,32 @@ export function Editor() {
     [note, updateNote]
   );
 
-  const handleContentInput = useCallback(
-    () => {
-      if (!note || !contentRef.current) return;
+  const handleContentInput = useCallback(() => {
+    if (!note || !contentRef.current) return;
 
-      const html = contentRef.current.innerHTML;
+    const html = contentRef.current.innerHTML;
 
-      // Prevent unnecessary updates
-      if (html !== note.content) {
-        updateNote(note.id, { content: html });
-      }
-    },
-    [note, updateNote]
-  );
+    if (html !== note.content) {
+      updateNote(note.id, { content: html });
+    }
+
+    updateToolbarState();
+  }, [note, updateNote, updateToolbarState]);
 
   const applyFormat = useCallback(
     (command: 'bold' | 'italic' | 'underline' | 'foreColor', value?: string) => {
       if (!note) return;
+
       document.execCommand(command, false, value);
+
       if (contentRef.current) {
         updateNote(note.id, { content: contentRef.current.innerHTML });
       }
+
+      updateToolbarState();
+      contentRef.current?.focus();
     },
-    [note, updateNote]
+    [note, updateNote, updateToolbarState]
   );
 
   const handleDelete = useCallback(() => {
@@ -112,7 +146,6 @@ export function Editor() {
         transition={{ duration: 0.15, ease: 'easeInOut' }}
         className="flex-1 flex flex-col h-full overflow-hidden"
       >
-        {/* Toolbar */}
         <div className="flex items-center justify-between px-10 pt-7 pb-3">
           <div className="flex items-center gap-4">
             <span className="text-[10px] font-mono text-shadow tracking-widest uppercase dark:text-smoke">
@@ -145,7 +178,6 @@ export function Editor() {
           </button>
         </div>
 
-        {/* Title */}
         <div className="px-10 pb-2">
           <input
             ref={titleRef}
@@ -165,13 +197,11 @@ export function Editor() {
           />
         </div>
 
-        {/* Formatting toolbar */}
         <div className="mx-10 mb-2 flex items-center gap-2">
           <button
             type="button"
             onMouseDown={(e) => {
               e.preventDefault();
-              setIsBold((prev) => !prev);
               applyFormat('bold');
             }}
             className={`px-2 py-1 rounded border text-[11px] font-mono tracking-wide transition-colors
@@ -182,11 +212,11 @@ export function Editor() {
           >
             B
           </button>
+
           <button
             type="button"
             onMouseDown={(e) => {
               e.preventDefault();
-              setIsItalic((prev) => !prev);
               applyFormat('italic');
             }}
             className={`px-2 py-1 rounded border text-[11px] font-mono tracking-wide transition-colors
@@ -197,11 +227,11 @@ export function Editor() {
           >
             I
           </button>
+
           <button
             type="button"
             onMouseDown={(e) => {
               e.preventDefault();
-              setIsUnderline((prev) => !prev);
               applyFormat('underline');
             }}
             className={`px-2 py-1 rounded border text-[11px] font-mono tracking-wide transition-colors
@@ -212,6 +242,7 @@ export function Editor() {
           >
             U
           </button>
+
           <div className="ml-3 flex items-center gap-1">
             <span className="text-[10px] font-mono text-shadow dark:text-smoke mr-1">
               Color
@@ -225,10 +256,7 @@ export function Editor() {
                 applyFormat('foreColor', color);
               }}
               className={`w-4 h-4 rounded-full border border-mist bg-ink/90 dark:bg-fog/90
-                ${activeColor === 'primary'
-                  ? 'ring-2 ring-white dark:ring-fog'
-                  : ''
-                }`}
+                ${activeColor === 'primary' ? 'ring-2 ring-white dark:ring-fog' : ''}`}
             />
             <button
               type="button"
@@ -238,10 +266,7 @@ export function Editor() {
                 applyFormat('foreColor', '#E07A5F');
               }}
               className={`w-4 h-4 rounded-full border border-mist
-                ${activeColor === 'terracotta'
-                  ? 'ring-2 ring-white dark:ring-fog'
-                  : ''
-                }`}
+                ${activeColor === 'terracotta' ? 'ring-2 ring-white dark:ring-fog' : ''}`}
               style={{ backgroundColor: '#E07A5F' }}
             />
             <button
@@ -252,10 +277,7 @@ export function Editor() {
                 applyFormat('foreColor', '#57837B');
               }}
               className={`w-4 h-4 rounded-full border border-mist
-                ${activeColor === 'teal'
-                  ? 'ring-2 ring-white dark:ring-fog'
-                  : ''
-                }`}
+                ${activeColor === 'teal' ? 'ring-2 ring-white dark:ring-fog' : ''}`}
               style={{ backgroundColor: '#57837B' }}
             />
             <button
@@ -266,10 +288,7 @@ export function Editor() {
                 applyFormat('foreColor', '#81B294');
               }}
               className={`w-4 h-4 rounded-full border border-mist
-                ${activeColor === 'sage'
-                  ? 'ring-2 ring-white dark:ring-fog'
-                  : ''
-                }`}
+                ${activeColor === 'sage' ? 'ring-2 ring-white dark:ring-fog' : ''}`}
               style={{ backgroundColor: '#81B294' }}
             />
             <button
@@ -280,10 +299,7 @@ export function Editor() {
                 applyFormat('foreColor', '#7B9CAB');
               }}
               className={`w-4 h-4 rounded-full border border-mist
-                ${activeColor === 'blue'
-                  ? 'ring-2 ring-white dark:ring-fog'
-                  : ''
-                }`}
+                ${activeColor === 'blue' ? 'ring-2 ring-white dark:ring-fog' : ''}`}
               style={{ backgroundColor: '#7B9CAB' }}
             />
             <button
@@ -294,24 +310,22 @@ export function Editor() {
                 applyFormat('foreColor', '#D4A59A');
               }}
               className={`w-4 h-4 rounded-full border border-mist
-                ${activeColor === 'rose'
-                  ? 'ring-2 ring-white dark:ring-fog'
-                  : ''
-                }`}
+                ${activeColor === 'rose' ? 'ring-2 ring-white dark:ring-fog' : ''}`}
               style={{ backgroundColor: '#D4A59A' }}
             />
           </div>
         </div>
 
-        {/* Divider */}
         <div className="mx-10 mb-3 h-px bg-mist dark:bg-stone" />
 
-        {/* Content */}
         <div
           ref={contentRef}
           contentEditable
           suppressContentEditableWarning
           onInput={handleContentInput}
+          onKeyUp={updateToolbarState}
+          onMouseUp={updateToolbarState}
+          onFocus={updateToolbarState}
           spellCheck
           className={`flex-1 mx-10 mb-10 bg-transparent font-mono
                      text-ink/90 outline-none resize-none

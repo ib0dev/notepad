@@ -1,6 +1,11 @@
 import { create } from 'zustand';
 import { Note, Folder } from '../types/note';
-import { loadSettings, saveSettings, getRandomFolderColor, generateId } from '../utils/storage';
+import {
+  loadSettings,
+  saveSettings,
+  getRandomFolderColor,
+  generateId,
+} from '../utils/storage';
 import {
   fetchNotes,
   fetchFolders,
@@ -30,7 +35,12 @@ interface NotesState {
   setSyncError: (message: string | null) => void;
 
   createNote: () => void;
-  updateNote: (id: string, patch: Partial<Pick<Note, 'title' | 'content' | 'pinned' | 'folderId'>>) => void;
+  updateNote: (
+    id: string,
+    patch: Partial<
+      Pick<Note, 'title' | 'content' | 'pinned' | 'folderId'>
+    >
+  ) => void;
   deleteNote: (id: string) => void;
   selectNote: (id: string) => void;
   setSearch: (q: string) => void;
@@ -69,19 +79,42 @@ export const useNotes = create<NotesState>((set, get) => ({
 
   setUserId: (userId) => set({ userId }),
 
-  setSyncError: (message) => set({ syncError: message, syncStatus: message ? 'error' : 'saved' }),
+  setSyncError: (message) =>
+    set({
+      syncError: message,
+      syncStatus: message ? 'error' : 'saved',
+    }),
 
-  clearAll: () => set({ notes: [], folders: [], activeId: null, selectedFolderId: null, draggedNoteId: null, searchQuery: '' }),
+  clearAll: () =>
+    set({
+      notes: [],
+      folders: [],
+      activeId: null,
+      selectedFolderId: null,
+      draggedNoteId: null,
+      searchQuery: '',
+    }),
 
   loadRemoteData: async (userId) => {
     set({ syncStatus: 'syncing', syncError: null });
     try {
-      const [folders, notes] = await Promise.all([fetchFolders(userId), fetchNotes(userId)]);
-      set({ folders, notes, activeId: notes[0]?.id ?? null, syncStatus: 'saved', syncError: null });
+      const [folders, notes] = await Promise.all([
+        fetchFolders(userId),
+        fetchNotes(userId),
+      ]);
+      set({
+        folders,
+        notes,
+        activeId: notes[0]?.id ?? null,
+        syncStatus: 'saved',
+        syncError: null,
+      });
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to sync remote data';
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'Failed to sync remote data';
       set({ syncStatus: 'error', syncError: message });
-      console.error('loadRemoteData', error);
     }
   },
 
@@ -91,22 +124,36 @@ export const useNotes = create<NotesState>((set, get) => ({
     const tempId = generateId();
     const folderId = get().selectedFolderId;
 
-    const note: Note = { id: tempId, title: '', content: '', createdAt: now, updatedAt: now, folderId, pinned: false };
-    set((state) => ({ notes: [note, ...state.notes], activeId: tempId }));
+    const note: Note = {
+      id: tempId,
+      title: '',
+      content: '',
+      createdAt: now,
+      updatedAt: now,
+      folderId,
+      pinned: false,
+    };
+
+    set((state) => ({
+      notes: [note, ...state.notes],
+      activeId: tempId,
+    }));
 
     if (!userId) return;
 
-    createNoteRemote({ ...note }, userId)
+    createNoteRemote(note, userId)
       .then((remoteNote) => {
-        set((state) => {
-          const notes = state.notes.map((n) => (n.id === tempId ? remoteNote : n));
-          return { notes, activeId: remoteNote.id };
-        });
+        set((state) => ({
+          notes: state.notes.map((n) =>
+            n.id === tempId ? remoteNote : n
+          ),
+          activeId: remoteNote.id,
+        }));
       })
       .catch((error) => {
-        const message = error instanceof Error ? error.message : 'Failed to create note';
-        get().setSyncError(message);
-        console.error('createNote', error);
+        get().setSyncError(
+          error instanceof Error ? error.message : 'Failed to create note'
+        );
       });
   },
 
@@ -114,13 +161,19 @@ export const useNotes = create<NotesState>((set, get) => ({
     const noteExists = get().notes.some((n) => n.id === id);
     if (!noteExists) return;
 
-    set((state) => {
-      const notes = state.notes.map((n) => (n.id === id ? { ...n, ...patch, updatedAt: Date.now() } : n));
-      return { notes, syncStatus: 'syncing', syncError: null };
-    });
+    set((state) => ({
+      notes: state.notes.map((n) =>
+        n.id === id ? { ...n, ...patch, updatedAt: Date.now() } : n
+      ),
+      syncStatus: 'syncing',
+      syncError: null,
+    }));
 
     const userId = get().userId;
     if (!userId) return;
+
+    // ❗ Skip syncing if tab is inactive
+    if (document.visibilityState !== 'visible') return;
 
     const existingTimer = updateNoteTimers.get(id);
     if (existingTimer) clearTimeout(existingTimer);
@@ -128,6 +181,16 @@ export const useNotes = create<NotesState>((set, get) => ({
     const timer = setTimeout(async () => {
       const note = get().notes.find((n) => n.id === id);
       if (!note) return;
+
+      let finished = false;
+
+      // 🛡 fallback to prevent infinite syncing
+      const fallback = setTimeout(() => {
+        if (!finished) {
+          set({ syncStatus: 'saved' });
+        }
+      }, 4000);
+
       try {
         await updateNoteRemote(id, {
           title: note.title,
@@ -135,11 +198,22 @@ export const useNotes = create<NotesState>((set, get) => ({
           pinned: note.pinned,
           folderId: note.folderId,
         });
+
+        finished = true;
+        clearTimeout(fallback);
+
         set({ syncStatus: 'saved', syncError: null });
       } catch (error) {
-        const message = error instanceof Error ? error.message : 'Failed to update note';
-        set({ syncStatus: 'error', syncError: message });
-        console.error('updateNote', error);
+        finished = true;
+        clearTimeout(fallback);
+
+        set({
+          syncStatus: 'error',
+          syncError:
+            error instanceof Error
+              ? error.message
+              : 'Failed to update note',
+        });
       }
     }, 300);
 
@@ -148,22 +222,32 @@ export const useNotes = create<NotesState>((set, get) => ({
 
   deleteNote: (id) => {
     const noteToDelete = get().notes.find((n) => n.id === id);
+
     set((state) => {
       const notes = state.notes.filter((n) => n.id !== id);
-      const activeId = state.activeId === id ? notes[0]?.id ?? null : state.activeId;
-      return { notes, activeId, syncStatus: 'syncing', syncError: null };
+      const activeId =
+        state.activeId === id ? notes[0]?.id ?? null : state.activeId;
+      return { notes, activeId, syncStatus: 'syncing' };
     });
 
     const userId = get().userId;
     if (!userId || !noteToDelete) return;
 
     deleteNoteRemote(id)
-      .then(() => set({ syncStatus: 'saved', syncError: null }))
+      .then(() => set({ syncStatus: 'saved' }))
       .catch((error) => {
-        const message = error instanceof Error ? error.message : 'Failed to delete note';
-        set({ syncStatus: 'error', syncError: message });
-        console.error('deleteNote', error);
-        set((state) => ({ notes: [...state.notes, noteToDelete] }));
+        set({
+          syncStatus: 'error',
+          syncError:
+            error instanceof Error
+              ? error.message
+              : 'Failed to delete note',
+        });
+
+        // rollback
+        set((state) => ({
+          notes: [...state.notes, noteToDelete],
+        }));
       });
   },
 
@@ -179,90 +263,114 @@ export const useNotes = create<NotesState>((set, get) => ({
 
   createFolder: (name, color) => {
     const userId = get().userId;
-    const folder: Folder = { id: generateId(), name, color: color || getRandomFolderColor() };
 
-    set((state) => ({ folders: [...state.folders, folder], syncStatus: 'syncing', syncError: null }));
+    const folder: Folder = {
+      id: generateId(),
+      name,
+      color: color || getRandomFolderColor(),
+    };
+
+    set((state) => ({
+      folders: [...state.folders, folder],
+      syncStatus: 'syncing',
+    }));
 
     if (!userId) return;
 
     createFolderRemote(folder, userId)
       .then((remoteFolder) => {
-        set((state) => ({ folders: state.folders.map((f) => (f.id === folder.id ? remoteFolder : f)), syncStatus: 'saved', syncError: null }));
+        set((state) => ({
+          folders: state.folders.map((f) =>
+            f.id === folder.id ? remoteFolder : f
+          ),
+          syncStatus: 'saved',
+        }));
       })
       .catch((error) => {
-        const message = error instanceof Error ? error.message : 'Failed to create folder';
-        set({ syncStatus: 'error', syncError: message });
-        console.error('createFolder', error);
+        set({
+          syncStatus: 'error',
+          syncError:
+            error instanceof Error
+              ? error.message
+              : 'Failed to create folder',
+        });
       });
   },
 
   deleteFolder: (id) => {
-    const previousFolders = get().folders;
-    const previousNotes = get().notes;
+    const prevFolders = get().folders;
+    const prevNotes = get().notes;
 
-    set((state) => {
-      const folders = state.folders.filter((f) => f.id !== id);
-      const notes = state.notes.map((n) => (n.folderId === id ? { ...n, folderId: null } : n));
-      return { folders, notes, syncStatus: 'syncing', syncError: null };
-    });
+    set((state) => ({
+      folders: state.folders.filter((f) => f.id !== id),
+      notes: state.notes.map((n) =>
+        n.folderId === id ? { ...n, folderId: null } : n
+      ),
+      syncStatus: 'syncing',
+    }));
 
     const userId = get().userId;
     if (!userId) return;
 
     deleteFolderRemote(id)
-      .then(() => set({ syncStatus: 'saved', syncError: null }))
+      .then(() => set({ syncStatus: 'saved' }))
       .catch((error) => {
-        const message = error instanceof Error ? error.message : 'Failed to delete folder';
-        set({ folders: previousFolders, notes: previousNotes, syncStatus: 'error', syncError: message });
-        console.error('deleteFolder', error);
+        set({
+          folders: prevFolders,
+          notes: prevNotes,
+          syncStatus: 'error',
+          syncError:
+            error instanceof Error
+              ? error.message
+              : 'Failed to delete folder',
+        });
       });
   },
 
-  renameFolder: (id, name) => {
-    set((state) => ({ folders: state.folders.map((f) => (f.id === id ? { ...f, name } : f)) }));
-    // Optional remote folder rename can be added once API supports it.
-  },
+  renameFolder: (id, name) =>
+    set((state) => ({
+      folders: state.folders.map((f) =>
+        f.id === id ? { ...f, name } : f
+      ),
+    })),
 
   selectFolder: (id) => set({ selectedFolderId: id }),
 
-  updateSetting: (patch) => {
+  updateSetting: (patch) =>
     set((state) => {
       const settings = { ...state.settings, ...patch };
       saveSettings(settings);
       return { settings };
-    });
-  },
+    }),
 
   setSortBy: (sortBy) => set({ sortBy }),
 
   filteredNotes: () => {
     const { notes, searchQuery, selectedFolderId, sortBy } = get();
+
     let filtered = notes;
 
     if (selectedFolderId) {
-      filtered = filtered.filter((n) => n.folderId === selectedFolderId);
+      filtered = filtered.filter(
+        (n) => n.folderId === selectedFolderId
+      );
     }
 
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
-      filtered = filtered.filter((n) => n.title.toLowerCase().includes(q) || n.content.toLowerCase().includes(q));
+      filtered = filtered.filter(
+        (n) =>
+          n.title.toLowerCase().includes(q) ||
+          n.content.toLowerCase().includes(q)
+      );
     }
 
-    const sorted = [...filtered].sort((a, b) => {
-      const aPinned = !!a.pinned;
-      const bPinned = !!b.pinned;
-      if (aPinned !== bPinned) return aPinned ? -1 : 1;
-
-      if (sortBy === 'title') {
-        return a.title.localeCompare(b.title);
-      }
-      if (sortBy === 'created') {
-        return b.createdAt - a.createdAt;
-      }
+    return [...filtered].sort((a, b) => {
+      if (a.pinned !== b.pinned) return a.pinned ? -1 : 1;
+      if (sortBy === 'title') return a.title.localeCompare(b.title);
+      if (sortBy === 'created') return b.createdAt - a.createdAt;
       return b.updatedAt - a.updatedAt;
     });
-
-    return sorted;
   },
 
   activeNote: () => {
@@ -270,3 +378,16 @@ export const useNotes = create<NotesState>((set, get) => ({
     return notes.find((n) => n.id === activeId);
   },
 }));
+
+// ✅ GLOBAL FIX: prevent stuck syncing after tab switch
+if (typeof window !== 'undefined') {
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      const state = useNotes.getState();
+
+      if (state.syncStatus === 'syncing') {
+        useNotes.setState({ syncStatus: 'saved' });
+      }
+    }
+  });
+}

@@ -35,8 +35,13 @@ export function Editor() {
 
   // Sync editor content only when switching notes
   useEffect(() => {
-    if (contentRef.current) {
-      contentRef.current.innerHTML = note?.content || '';
+    if (!contentRef.current) return;
+
+    const currentHtml = contentRef.current.innerHTML;
+    const newHtml = note?.content || '';
+
+    if (currentHtml !== newHtml) {
+      contentRef.current.innerHTML = newHtml;
     }
   }, [note?.id]);
 
@@ -58,10 +63,15 @@ export function Editor() {
   );
 
   const handleContentInput = useCallback(
-    (e: React.FormEvent<HTMLDivElement>) => {
-      if (!note) return;
-      const html = (e.currentTarget as HTMLDivElement).innerHTML;
-      updateNote(note.id, { content: html });
+    () => {
+      if (!note || !contentRef.current) return;
+
+      const html = contentRef.current.innerHTML;
+
+      // Prevent unnecessary updates
+      if (html !== note.content) {
+        updateNote(note.id, { content: html });
+      }
     },
     [note, updateNote]
   );
@@ -95,7 +105,7 @@ export function Editor() {
   return (
     <AnimatePresence mode="wait">
       <motion.div
-        key={note.id}
+        key="editor"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -146,13 +156,12 @@ export function Editor() {
             className={`w-full bg-transparent font-mono font-semibold
                        text-ink placeholder-mist outline-none tracking-tight
                        border-none resize-none leading-snug dark:text-fog dark:placeholder-ash
-                       ${
-                         settings.editorFontSize === 'small'
-                           ? 'text-lg'
-                           : settings.editorFontSize === 'large'
-                           ? 'text-2xl'
-                           : 'text-xl'
-                       }`}
+                       ${settings.editorFontSize === 'small'
+                ? 'text-lg'
+                : settings.editorFontSize === 'large'
+                  ? 'text-2xl'
+                  : 'text-xl'
+              }`}
           />
         </div>
 
@@ -166,10 +175,9 @@ export function Editor() {
               applyFormat('bold');
             }}
             className={`px-2 py-1 rounded border text-[11px] font-mono tracking-wide transition-colors
-              ${
-                isBold
-                  ? 'border-ink bg-ink text-sand dark:border-fog dark:bg-fog dark:text-charcoal'
-                  : 'border-mist text-shadow hover:border-ink hover:text-ink dark:border-stone dark:text-smoke dark:hover:border-fog dark:hover:text-fog'
+              ${isBold
+                ? 'border-ink bg-ink text-sand dark:border-fog dark:bg-fog dark:text-charcoal'
+                : 'border-mist text-shadow hover:border-ink hover:text-ink dark:border-stone dark:text-smoke dark:hover:border-fog dark:hover:text-fog'
               }`}
           >
             B
@@ -182,10 +190,9 @@ export function Editor() {
               applyFormat('italic');
             }}
             className={`px-2 py-1 rounded border text-[11px] font-mono tracking-wide transition-colors
-              ${
-                isItalic
-                  ? 'border-ink bg-ink text-sand dark:border-fog dark:bg-fog dark:text-charcoal'
-                  : 'border-mist text-shadow hover:border-ink hover:text-ink dark:border-stone dark:text-smoke dark:hover:border-fog dark:hover:text-fog'
+              ${isItalic
+                ? 'border-ink bg-ink text-sand dark:border-fog dark:bg-fog dark:text-charcoal'
+                : 'border-mist text-shadow hover:border-ink hover:text-ink dark:border-stone dark:text-smoke dark:hover:border-fog dark:hover:text-fog'
               }`}
           >
             I
@@ -198,10 +205,9 @@ export function Editor() {
               applyFormat('underline');
             }}
             className={`px-2 py-1 rounded border text-[11px] font-mono tracking-wide transition-colors
-              ${
-                isUnderline
-                  ? 'border-ink bg-ink text-sand dark:border-fog dark:bg-fog dark:text-charcoal'
-                  : 'border-mist text-shadow hover:border-ink hover:text-ink dark:border-stone dark:text-smoke dark:hover:border-fog dark:hover:text-fog'
+              ${isUnderline
+                ? 'border-ink bg-ink text-sand dark:border-fog dark:bg-fog dark:text-charcoal'
+                : 'border-mist text-shadow hover:border-ink hover:text-ink dark:border-stone dark:text-smoke dark:hover:border-fog dark:hover:text-fog'
               }`}
           >
             U
@@ -219,10 +225,9 @@ export function Editor() {
                 applyFormat('foreColor', color);
               }}
               className={`w-4 h-4 rounded-full border border-mist bg-ink/90 dark:bg-fog/90
-                ${
-                  activeColor === 'primary'
-                    ? 'ring-2 ring-white dark:ring-fog'
-                    : ''
+                ${activeColor === 'primary'
+                  ? 'ring-2 ring-white dark:ring-fog'
+                  : ''
                 }`}
             />
             <button
@@ -233,10 +238,9 @@ export function Editor() {
                 applyFormat('foreColor', '#E07A5F');
               }}
               className={`w-4 h-4 rounded-full border border-mist
-                ${
-                  activeColor === 'terracotta'
-                    ? 'ring-2 ring-white dark:ring-fog'
-                    : ''
+                ${activeColor === 'terracotta'
+                  ? 'ring-2 ring-white dark:ring-fog'
+                  : ''
                 }`}
               style={{ backgroundColor: '#E07A5F' }}
             />
@@ -248,10 +252,9 @@ export function Editor() {
                 applyFormat('foreColor', '#57837B');
               }}
               className={`w-4 h-4 rounded-full border border-mist
-                ${
-                  activeColor === 'teal'
-                    ? 'ring-2 ring-white dark:ring-fog'
-                    : ''
+                ${activeColor === 'teal'
+                  ? 'ring-2 ring-white dark:ring-fog'
+                  : ''
                 }`}
               style={{ backgroundColor: '#57837B' }}
             />
@@ -263,10 +266,9 @@ export function Editor() {
                 applyFormat('foreColor', '#81B294');
               }}
               className={`w-4 h-4 rounded-full border border-mist
-                ${
-                  activeColor === 'sage'
-                    ? 'ring-2 ring-white dark:ring-fog'
-                    : ''
+                ${activeColor === 'sage'
+                  ? 'ring-2 ring-white dark:ring-fog'
+                  : ''
                 }`}
               style={{ backgroundColor: '#81B294' }}
             />
@@ -278,10 +280,9 @@ export function Editor() {
                 applyFormat('foreColor', '#7B9CAB');
               }}
               className={`w-4 h-4 rounded-full border border-mist
-                ${
-                  activeColor === 'blue'
-                    ? 'ring-2 ring-white dark:ring-fog'
-                    : ''
+                ${activeColor === 'blue'
+                  ? 'ring-2 ring-white dark:ring-fog'
+                  : ''
                 }`}
               style={{ backgroundColor: '#7B9CAB' }}
             />
@@ -293,10 +294,9 @@ export function Editor() {
                 applyFormat('foreColor', '#D4A59A');
               }}
               className={`w-4 h-4 rounded-full border border-mist
-                ${
-                  activeColor === 'rose'
-                    ? 'ring-2 ring-white dark:ring-fog'
-                    : ''
+                ${activeColor === 'rose'
+                  ? 'ring-2 ring-white dark:ring-fog'
+                  : ''
                 }`}
               style={{ backgroundColor: '#D4A59A' }}
             />
@@ -316,13 +316,12 @@ export function Editor() {
           className={`flex-1 mx-10 mb-10 bg-transparent font-mono
                      text-ink/90 outline-none resize-none
                      leading-relaxed tracking-wide dark:text-fog/90
-                     ${
-                       settings.editorFontSize === 'small'
-                         ? 'text-xs'
-                         : settings.editorFontSize === 'large'
-                         ? 'text-base'
-                         : 'text-sm'
-                     }`}
+                     ${settings.editorFontSize === 'small'
+              ? 'text-xs'
+              : settings.editorFontSize === 'large'
+                ? 'text-base'
+                : 'text-sm'
+            }`}
         />
       </motion.div>
     </AnimatePresence>

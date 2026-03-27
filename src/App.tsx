@@ -54,7 +54,7 @@ export default function App() {
   }
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-sand dark:bg-charcoal font-mono overflow-hidden select-none">
+    <div className="h-screen w-screen flex flex-col bg-sand dark:bg-charcoal font-mono overflow-x-hidden select-none">
       <header className="flex justify-between items-center px-4 py-2 bg-sand dark:bg-charcoal border-b border-mist dark:border-stone">
         <div></div>
         {user && (

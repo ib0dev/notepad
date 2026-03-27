@@ -144,7 +144,7 @@ export function Editor() {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.15, ease: 'easeInOut' }}
-        className="flex-1 flex flex-col h-full overflow-hidden"
+        className="flex-1 flex flex-col h-full min-h-0 overflow-hidden"
       >
         <div className="flex items-center justify-between px-10 pt-7 pb-3">
           <div className="flex items-center gap-4">
@@ -327,7 +327,7 @@ export function Editor() {
           onMouseUp={updateToolbarState}
           onFocus={updateToolbarState}
           spellCheck
-          className={`flex-1 mx-10 mb-10 bg-transparent font-mono
+          className={`flex-1 min-h-0 h-full overflow-y-auto mx-10 mb-10 bg-transparent font-mono
                      text-ink/90 outline-none resize-none
                      leading-relaxed tracking-wide dark:text-fog/90
                      ${settings.editorFontSize === 'small'

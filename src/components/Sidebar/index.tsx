@@ -14,9 +14,12 @@ export function Sidebar() {
   const [showTemplateModal, setShowTemplateModal] = useState(false);
 
   return (
-    <aside className={`${isCollapsed ? 'w-[64px]' : 'w-[234px]'} transition-all duration-300 flex-shrink-0 h-full flex flex-col border-r border-mist bg-sand dark:bg-charcoal dark:border-stone`}>
+    <aside
+      className={`${isCollapsed ? 'w-[64px]' : 'w-[234px]'
+        } transition-all duration-300 flex-shrink-0 h-full min-h-0 flex flex-col overflow-hidden border-r border-mist bg-sand dark:bg-charcoal dark:border-stone`}
+    >
       {/* Header */}
-      <div className="flex items-center justify-between px-5 pt-6 pb-4">
+      <div className="flex items-center justify-between px-5 pt-6 pb-4 flex-shrink-0">
         {!isCollapsed && (
           <span className="text-[12px] font-mono font-semibold tracking-widest uppercase text-shadow dark:text-fog">
             Notes
@@ -68,11 +71,11 @@ export function Sidebar() {
       </div>
 
       {!isCollapsed && (
-        <>
+        <div className="flex-1 min-h-0 overflow-y-auto">
           <FolderList />
           <SearchBar />
           <NoteList />
-        </>
+        </div>
       )}
       <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
       {showTemplateModal && (

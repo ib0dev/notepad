@@ -7,12 +7,13 @@ export function NoteList() {
   const notes = filteredNotes();
 
   return (
-    <div className="flex-1 flex flex-col overflow-y-auto py-1 scrollbar-none">
+    <div className="py-1">
       <div className="px-5 pb-1 flex items-center justify-end">
         <label className="flex items-center gap-2">
           <span className="text-[10px] font-mono text-shadow/80 dark:text-smoke/80 uppercase tracking-wide">
             Sort
           </span>
+
           <select
             value={sortBy}
             onChange={(e) =>
@@ -26,25 +27,24 @@ export function NoteList() {
           </select>
         </label>
       </div>
-      <div className="flex-1 overflow-y-auto">
-        <AnimatePresence initial={false}>
-          {notes.length === 0 ? (
-            <motion.div
-              initial={{ opacity: 0, y: -4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: 0.15 }}
-              className="px-5 py-3"
-            >
-              <p className="text-[11px] font-mono text-shadow tracking-wide dark:text-smoke">
-                No notes found
-              </p>
-            </motion.div>
-          ) : (
-            notes.map((note) => <NoteItem key={note.id} note={note} />)
-          )}
-        </AnimatePresence>
-      </div>
+
+      <AnimatePresence initial={false}>
+        {notes.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.15 }}
+            className="px-5 py-3"
+          >
+            <p className="text-[11px] font-mono text-shadow tracking-wide dark:text-smoke">
+              No notes found
+            </p>
+          </motion.div>
+        ) : (
+          notes.map((note) => <NoteItem key={note.id} note={note} />)
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -1,3 +1,4 @@
 /.qoder
 /node_modules
 .env
+/dist
